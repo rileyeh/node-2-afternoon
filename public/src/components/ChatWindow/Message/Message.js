@@ -9,7 +9,8 @@ export default class Message extends Component {
     super(props);
     this.state = {
       editting: false,
-      text: this.props.text
+      text: this.props.text,
+      user: this.props.user
     };
 
     this.handleChange = this.handleChange.bind( this );
@@ -20,28 +21,38 @@ export default class Message extends Component {
     this.setState({ text: event.target.value });
   }
 
+  handleUserChange( event ) {
+    this.setState({ user: event.target.value });
+  }
+
   edit( event ) {
-    const { text } = this.state;
+    const { text, user } = this.state;
     const { id, edit } = this.props;
     if( event.key === "Enter" && text.length !== 0 ) {
-      edit( id, text );
+      edit( id, text, user );
       this.setState({ editting: false });
     }
   }
 
   render() {
-    const { id, text, time, edit, remove } = this.props;
+    const { id, user, text, time, remove } = this.props;
     const { editting } = this.state;
-    console.log( id, text );
+    console.log( id, text, user );
     return (
       <div className="Message__container">
         <span className="Message__time">{time}</span>
         {
           editting
           ?
+          <div>
+            <input className="User__input" value={ this.state.user } onChange={ this.handleUserChange } onKeyPress={ this.edit } />
             <input className="Message__input" value={ this.state.text } onChange={ this.handleChange } onKeyPress={ this.edit } />
+          </div>
           :
+          <div>
+            <span className="User__text">{user}</span>
             <span className="Message__text">{text}</span>
+          </div>
         }
         <span className="Message__edit" onClick={ () => this.setState({ editting: !this.state.editting, text }) }> <FaPencil /> </span>
         <span className="Message__delete" onClick={ () => remove( id ) }> <FaTrash /> </span>
